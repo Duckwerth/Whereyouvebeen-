@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Travel Map</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        svg {
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+        path {
+            fill: #ddd;
+            stroke: #fff;
+            stroke-width: 0.5;
+            cursor: pointer;
+            transition: fill 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <h1>Click a Country or U.S. State to Mark as Visited</h1>
+    <svg id="map"></svg>
+    
+    <script>
+        const width = 1000;
+        const height = 600;
+        const svg = d3.select("#map").attr("viewBox", `0 0 ${width} ${height}`);
+        
+        d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(world) {
+            const projection = d3.geoMercator().scale(150).translate([width / 2, height / 1.5]);
+            const path = d3.geoPath().projection(projection);
+            
+            svg.selectAll("path")
+                .data(world.features)
+                .enter()
+                .append("path")
+                .attr("d", path)
+                .attr("fill", "#ddd")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 0.5)
+                .on("click", function(event, d) {
+                    const currentColor = d3.select(this).attr("fill");
+                    d3.select(this).attr("fill", currentColor === "green" ? "#ddd" : "green");
+                });
+        });
+    </script>
+</body>
+</html>
